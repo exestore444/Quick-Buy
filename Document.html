@@ -5,186 +5,8 @@
 <title>Quick Buy</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{
-  font-family:Arial, Helvetica, sans-serif;
-  background:#060000;
-  color:#fff;
-  min-height:100vh;
-}
-
-/* ===== HEADER ===== */
-header{
-  background:#000;
-  border-bottom:3px solid red;
-  padding:28px;
-  text-align:center;
-}
-.logo{
-  font-family:Impact, Charcoal;
-  font-size:40px;
-  color:#ff1a1a;
-  text-shadow:0 0 18px red;
-}
-
-/* ===== NAV BAR (VIEWERS + CREATOR BUTTON) ===== */
-nav{
-  display:flex;
-  flex-wrap:nowrap;
-  justify-content:center;
-  align-items:center;
-  gap:14px;
-  padding:10px;
-  background:#000;
-  overflow-x:auto;
-}
-nav::-webkit-scrollbar{display:none}
-nav button{
-  background:none;
-  border:none;
-  color:#fff;
-  font-weight:bold;
-  cursor:pointer;
-  white-space:nowrap;
-  font-size:14px;
-}
-nav button:hover{color:red}
-
-/* animated creator button */
-.creator-btn{
-  color:#ff2b2b;
-  animation:pulse 1.8s infinite;
-}
-@keyframes pulse{
-  50%{text-shadow:0 0 12px red}
-}
-
-/* ===== SECTIONS ===== */
-section{display:none;padding:20px}
-.active{display:block}
-
-/* ===== PRODUCTS ===== */
-.products{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:18px;
-}
-.card{
-  width:230px;
-  background:#000;
-  border:1px solid red;
-  border-radius:16px;
-  padding:12px;
-  box-shadow:0 0 15px red;
-  transition:.35s;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-.card:hover{
-  transform:scale(1.1);
-  box-shadow:0 0 40px red;
-}
-.shape-round{border-radius:18px}
-.shape-slant{border-radius:30px 6px}
-.shape-circle{border-radius:50%}
-.card img{
-  width:100%;
-  height:130px;
-  object-fit:cover;
-  border-radius:10px;
-}
-.card h4{color:#ff4d4d}
-
-/* ===== INPUTS & CONTROLS (scoped to boxes/cards) ===== */
-.box input, .box select, .box button, .card button{
-  width:100%;
-  padding:7px;
-  margin:5px 0;
-  background:#000;
-  color:#fff;
-  border:1px solid red;
-  border-radius:6px;
-}
-.box button, .card button{background:red;cursor:pointer}
-
-/* keep nav buttons layout (avoid being overridden by generic button styles) */
-nav button{width:auto}
-
-/* ===== MODAL ===== */
-.modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.85);
-  z-index:99;
-  align-items:center;
-  justify-content:center;
-}
-.box{
-  background:#111;
-  width:calc(100% - 40px);
-  max-width:420px;
-  margin:0 20px;
-  padding:18px;
-  border-radius:10px;
-}
-
-/* ===== CREATOR MODE VISIBILITY ===== */
-.creator-only{display:none}
-body.creator .creator-only{display:flex}
-
-/* ===== CREATOR BAR (TOP RIGHT – COMPACT) ===== */
-#creatorBar{
-  position:fixed;
-  top:10px;
-  right:10px;
-  display:flex;
-  gap:6px;              /* 🔥 close spacing */
-  background:#2b0000;
-  padding:6px;
-  border-radius:10px;
-  z-index:200;
-}
-#creatorBar button{
-  width:66px;
-  font-size:10px;
-  border-radius:6px;
-}
-
-/* ===== UNLOCK FX ===== */
-#unlockFx{
-  position:fixed;
-  inset:0;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  background:black;
-  z-index:999;
-}
-#unlockFx.active{
-  display:flex;
-  animation:unlock 1.5s forwards;
-}
-@keyframes unlock{
-  50%{background:red}
-  100%{background:transparent}
-}
-#unlockFx h1{
-  font-family:Impact, Charcoal;
-  font-size:44px;
-  color:red;
-  animation:shake .15s infinite;
-}
-@keyframes shake{50%{transform:translateX(3px)}}
-
-/* small helper */
-.small{font-size:13px;color:#ddd}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
 <div id="unlockFx"><h1>ACCESS GRANTED</h1></div>
@@ -193,7 +15,6 @@ body.creator .creator-only{display:flex}
   <div class="logo">Quick Buy</div>
 </header>
 
-<!-- ===== NAV (ALWAYS VISIBLE) ===== -->
 <nav>
   <button onclick="openPage('home')">Home</button>
   <button onclick="openPage('products')">Products</button>
@@ -202,7 +23,6 @@ body.creator .creator-only{display:flex}
   <button class="creator-btn" onclick="creatorPrompt()">Creator</button>
 </nav>
 
-<!-- ===== CREATOR BAR (ONLY CREATOR MODE) ===== -->
 <div id="creatorBar" class="creator-only">
   <button onclick="openAddProduct()">Add</button>
   <button onclick="showMembers()">Users</button>
@@ -220,250 +40,49 @@ body.creator .creator-only{display:flex}
 </section>
 
 <!-- LOGIN -->
-<div id="loginModal" class="modal" data-modal>
+<div id="loginModal" class="modal">
   <div class="box">
     <h3>Login</h3>
-    <input id="loginEmail" type="email" placeholder="Email" autocomplete="username">
-    <button id="loginBtn">Login</button>
+    <input id="loginEmail" type="email" placeholder="Email">
+    <button onclick="login()">Login</button>
   </div>
 </div>
 
 <!-- SIGNUP -->
-<div id="signupModal" class="modal" data-modal>
+<div id="signupModal" class="modal">
   <div class="box">
     <h3>Signup</h3>
     <input id="signupEmail" type="email" placeholder="Email">
-    <button id="signupBtn">Signup</button>
+    <button onclick="signup()">Signup</button>
   </div>
 </div>
 
 <!-- ADD PRODUCT -->
-<div id="addProductModal" class="modal" data-modal>
+<div id="addProductModal" class="modal">
   <div class="box">
     <h3>Add Product</h3>
     <input id="pName" placeholder="Product Name">
-    <input id="pPrice" placeholder="Price" type="number" min="0" step="0.01">
-    <input id="pImg" placeholder="Image URL" type="url">
-    <input id="pLink" placeholder="Buy Link" type="url">
+    <input id="pPrice" type="number" placeholder="Price">
+    <input id="pImg" placeholder="Image URL">
+    <input id="pLink" placeholder="Buy Link">
     <select id="pShape">
       <option value="shape-round">Round</option>
       <option value="shape-slant">Slant</option>
       <option value="shape-circle">Circle</option>
     </select>
-    <button id="addProductBtn">Add</button>
+    <button onclick="addProduct()">Add</button>
   </div>
 </div>
 
 <!-- DATA -->
-<div id="dataModal" class="modal" data-modal>
+<div id="dataModal" class="modal">
   <div class="box">
     <h3 id="dataTitle"></h3>
-    <div id="dataList" class="small"></div>
-    <button id="closeDataBtn">Close</button>
+    <div id="dataList"></div>
+    <button onclick="closeData()">Close</button>
   </div>
 </div>
 
-<script>
-/* Safe localStorage parsing helpers */
-function safeParse(key){
-  try{
-    return JSON.parse(localStorage.getItem(key) || "[]");
-  }catch(e){
-    return [];
-  }
-}
-
-/* Data stores */
-let products = safeParse('products');
-let members = safeParse('members');
-let buyers = safeParse('buyers');
-
-/* Element references (avoid relying on ID globals) */
-const productList = document.getElementById('productList');
-const loginModal = document.getElementById('loginModal');
-const signupModal = document.getElementById('signupModal');
-const addProductModal = document.getElementById('addProductModal');
-const dataModal = document.getElementById('dataModal');
-const unlockFx = document.getElementById('unlockFx');
-const dataTitle = document.getElementById('dataTitle');
-const dataList = document.getElementById('dataList');
-
-const loginEmail = document.getElementById('loginEmail');
-const signupEmail = document.getElementById('signupEmail');
-const pName = document.getElementById('pName');
-const pPrice = document.getElementById('pPrice');
-const pImg = document.getElementById('pImg');
-const pLink = document.getElementById('pLink');
-const pShape = document.getElementById('pShape');
-
-/* Buttons */
-const loginBtn = document.getElementById('loginBtn');
-const signupBtn = document.getElementById('signupBtn');
-const addProductBtn = document.getElementById('addProductBtn');
-const closeDataBtn = document.getElementById('closeDataBtn');
-
-/* Initialize */
-window.addEventListener('DOMContentLoaded', () => {
-  if(localStorage.getItem('creator') === "true") document.body.classList.add('creator');
-  renderProducts();
-});
-
-/* NAV / MODALS */
-function openPage(id){
-  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
-  const el = document.getElementById(id);
-  if(el) el.classList.add("active");
-}
-function openLogin(){ loginModal.style.display = "flex"; loginEmail.focus(); }
-function openSignup(){ signupModal.style.display = "flex"; signupEmail.focus(); }
-function openAddProduct(){ addProductModal.style.display = "flex"; pName.focus(); }
-
-/* Close modals by clicking background or pressing Escape */
-document.addEventListener('click', (e)=>{
-  const m = e.target.closest('.modal');
-  if(m && e.target === m){
-    m.style.display = 'none';
-  }
-});
-document.addEventListener('keydown', (e)=>{
-  if(e.key === 'Escape'){
-    document.querySelectorAll('.modal').forEach(m=>m.style.display='none');
-  }
-});
-
-/* LOGIN / SIGNUP logic */
-loginBtn.addEventListener('click', () => {
-  const email = loginEmail.value && loginEmail.value.trim();
-  if(!email) return alert('Enter email');
-  localStorage.setItem('user', email);
-  if(!members.includes(email)){
-    members.push(email);
-    localStorage.setItem('members', JSON.stringify(members));
-  }
-  location.reload();
-});
-signupBtn.addEventListener('click', () => {
-  const email = signupEmail.value && signupEmail.value.trim();
-  if(!email) return alert('Enter email');
-  localStorage.setItem('user', email);
-  if(!members.includes(email)){
-    members.push(email);
-    localStorage.setItem('members', JSON.stringify(members));
-  }
-  location.reload();
-});
-
-/* CREATOR */
-function creatorPrompt(){
-  const p = prompt("Creator Password");
-  // NOTE: client-side password is only for demo; don't store secrets in client in real apps
-  if(p === "exestore"){
-    unlockFx.classList.add("active");
-    setTimeout(()=>{
-      unlockFx.classList.remove("active");
-      localStorage.setItem('creator', "true");
-      location.reload();
-    },1500);
-  } else alert("Wrong password");
-}
-function creatorLogout(){
-  localStorage.removeItem('creator');
-  location.reload();
-}
-
-/* PRODUCTS */
-addProductBtn.addEventListener('click', addProduct);
-function addProduct(){
-  const name = (pName.value || '').trim();
-  const price = pPrice.value;
-  const img = (pImg.value || '').trim();
-  const link = (pLink.value || '').trim();
-  const shape = pShape.value || 'shape-round';
-  if(!name || !price){
-    return alert('Please provide name and price');
-  }
-  products.push({ name, price, img, link, shape });
-  localStorage.setItem('products', JSON.stringify(products));
-  renderProducts();
-  addProductModal.style.display = 'none';
-  // reset fields (optional)
-  pName.value = pPrice.value = pImg.value = pLink.value = '';
-  pShape.value = 'shape-round';
-}
-
-function renderProducts(){
-  productList.innerHTML = "";
-  if(products.length === 0){
-    const msg = document.createElement('div');
-    msg.className = 'small';
-    msg.textContent = 'No products yet. Creator can add products.';
-    productList.appendChild(msg);
-    return;
-  }
-  products.forEach(p=>{
-    const d = document.createElement('div');
-    d.className = 'card ' + (p.shape || 'shape-round');
-
-    const img = document.createElement('img');
-    img.src = p.img || 'https://via.placeholder.com/300x130?text=No+Image';
-    img.alt = p.name || 'product';
-    d.appendChild(img);
-
-    const h4 = document.createElement('h4');
-    h4.textContent = p.name || 'Unnamed';
-    d.appendChild(h4);
-
-    const b = document.createElement('b');
-    b.textContent = '₹' + (p.price || '0');
-    d.appendChild(b);
-
-    const btn = document.createElement('button');
-    btn.textContent = 'Buy';
-    btn.addEventListener('click', ()=> buy(p.name, p.link));
-    d.appendChild(btn);
-
-    productList.appendChild(d);
-  });
-}
-
-/* BUY */
-function buy(name, link){
-  if(!localStorage.getItem('user')){
-    alert("Login required");
-    openLogin();
-    return;
-  }
-  const user = localStorage.getItem('user');
-  let found = buyers.find(b=>b.email===user && b.product===name);
-  if(found) found.count++;
-  else buyers.push({ email: user, product: name, count: 1 });
-  localStorage.setItem('buyers', JSON.stringify(buyers));
-  // open link (if provided) otherwise inform
-  if(link){
-    // ensure link has protocol for window.open; if not, treat as relative
-    try{
-      window.open(link, "_blank");
-    }catch(e){
-      alert('Could not open link');
-    }
-  } else {
-    alert('Product added to your purchases (no link provided).');
-  }
-}
-
-/* DATA (creator-only) */
-function showMembers(){
-  dataTitle.innerText = "Members";
-  dataList.innerHTML = members.map(m=>`<div>${m}</div>`).join("");
-  dataModal.style.display = "flex";
-}
-function showBuyers(){
-  dataTitle.innerText = "Buyers";
-  dataList.innerHTML = buyers.map(b=>`<div>${b.email} → ${b.product} (${b.count})</div>`).join("");
-  dataModal.style.display = "flex";
-}
-closeDataBtn && closeDataBtn.addEventListener('click', ()=> dataModal.style.display = 'none');
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>
