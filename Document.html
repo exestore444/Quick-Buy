@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Quick Buy</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+font-family:Arial;
+background:#060000;
+color:#fff;
+min-height:100vh;
+}
+
+/* ===== HEADER ===== */
+header{
+background:#000;
+border-bottom:3px solid red;
+padding:28px;
+text-align:center;
+}
+.logo{
+font-family:Impact;
+font-size:40px;
+color:#ff1a1a;
+text-shadow:0 0 18px red;
+}
+
+/* ===== NAV BAR (VIEWERS + CREATOR BUTTON) ===== */
+nav{
+display:flex;
+flex-wrap:nowrap;
+justify-content:center;
+align-items:center;
+gap:14px;
+padding:10px;
+background:#000;
+overflow-x:auto;
+}
+nav::-webkit-scrollbar{display:none}
+nav button{
+background:none;
+border:none;
+color:#fff;
+font-weight:bold;
+cursor:pointer;
+white-space:nowrap;
+font-size:14px;
+}
+nav button:hover{color:red}
+
+/* animated creator button */
+.creator-btn{
+color:#ff2b2b;
+animation:pulse 1.8s infinite;
+}
+@keyframes pulse{
+50%{text-shadow:0 0 12px red}
+}
+
+/* ===== SECTIONS ===== */
+section{display:none;padding:20px}
+.active{display:block}
+
+/* ===== PRODUCTS ===== */
+.products{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:18px;
+}
+.card{
+width:230px;
+background:#000;
+border:1px solid red;
+border-radius:16px;
+padding:12px;
+box-shadow:0 0 15px red;
+transition:.35s;
+}
+.card:hover{
+transform:scale(1.1);
+box-shadow:0 0 40px red;
+}
+.shape-round{border-radius:18px}
+.shape-slant{border-radius:30px 6px}
+.shape-circle{border-radius:50%}
+.card img{
+width:100%;
+height:130px;
+object-fit:cover;
+border-radius:10px;
+}
+.card h4{color:#ff4d4d}
+
+/* ===== INPUTS ===== */
+button,input,select{
+width:100%;
+padding:7px;
+margin:5px 0;
+background:#000;
+color:#fff;
+border:1px solid red;
+border-radius:6px;
+}
+button{background:red;cursor:pointer}
+
+/* ===== MODAL ===== */
+.modal{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.85);
+z-index:99;
+}
+.box{
+background:#111;
+max-width:420px;
+margin:90px auto;
+padding:18px;
+border-radius:10px;
+}
+
+/* ===== CREATOR MODE VISIBILITY ===== */
+.creator-only{display:none}
+body.creator .creator-only{display:flex}
+
+/* ===== CREATOR BAR (TOP RIGHT – COMPACT) ===== */
+#creatorBar{
+position:fixed;
+top:10px;
+right:10px;
+display:flex;
+gap:6px;              /* 🔥 close spacing */
+background:#2b0000;
+padding:6px;
+border-radius:10px;
+z-index:200;
+}
+#creatorBar button{
+width:66px;
+font-size:10px;
+border-radius:6px;
+}
+
+/* ===== UNLOCK FX ===== */
+#unlockFx{
+position:fixed;
+inset:0;
+display:none;
+align-items:center;
+justify-content:center;
+background:black;
+z-index:999;
+}
+#unlockFx.active{
+display:flex;
+animation:unlock 1.5s forwards;
+}
+@keyframes unlock{
+50%{background:red}
+100%{background:transparent}
+}
+#unlockFx h1{
+font-family:Impact;
+font-size:44px;
+color:red;
+animation:shake .15s infinite;
+}
+@keyframes shake{50%{transform:translateX(3px)}}
+</style>
+</head>
+
+<body>
+
+<div id="unlockFx"><h1>ACCESS GRANTED</h1></div>
+
+<header>
+<div class="logo">Quick Buy</div>
+</header>
+
+<!-- ===== NAV (ALWAYS VISIBLE) ===== -->
+<nav>
+<button onclick="openPage('home')">Home</button>
+<button onclick="openPage('products')">Products</button>
+<button onclick="openLogin()">Login</button>
+<button onclick="openSignup()">Signup</button>
+<button class="creator-btn" onclick="creatorPrompt()">Creator</button>
+</nav>
+
+<!-- ===== CREATOR BAR (ONLY CREATOR MODE) ===== -->
+<div id="creatorBar" class="creator-only">
+<button onclick="openAddProduct()">Add</button>
+<button onclick="showMembers()">Users</button>
+<button onclick="showBuyers()">Buyers</button>
+<button onclick="creatorLogout()">Out</button>
+</div>
+
+<section id="home" class="active">
+<h2>⚠️ Danger Shopping Zone</h2>
+<p>Login required before buying products.</p>
+</section>
+
+<section id="products">
+<div class="products" id="productList"></div>
+</section>
+
+<!-- LOGIN -->
+<div id="loginModal" class="modal">
+<div class="box">
+<h3>Login</h3>
+<input id="loginEmail" placeholder="Email">
+<button onclick="login()">Login</button>
+</div>
+</div>
+
+<!-- SIGNUP -->
+<div id="signupModal" class="modal">
+<div class="box">
+<h3>Signup</h3>
+<input id="signupEmail" placeholder="Email">
+<button onclick="signup()">Signup</button>
+</div>
+</div>
+
+<!-- ADD PRODUCT -->
+<div id="addProductModal" class="modal">
+<div class="box">
+<h3>Add Product</h3>
+<input id="pName" placeholder="Product Name">
+<input id="pPrice" placeholder="Price">
+<input id="pImg" placeholder="Image URL">
+<input id="pLink" placeholder="Buy Link">
+<select id="pShape">
+<option value="shape-round">Round</option>
+<option value="shape-slant">Slant</option>
+<option value="shape-circle">Circle</option>
+</select>
+<button onclick="addProduct()">Add</button>
+</div>
+</div>
+
+<!-- DATA -->
+<div id="dataModal" class="modal">
+<div class="box">
+<h3 id="dataTitle"></h3>
+<div id="dataList"></div>
+<button onclick="dataModal.style.display='none'">Close</button>
+</div>
+</div>
+
+<script>
+let products=JSON.parse(localStorage.products||"[]");
+let members=JSON.parse(localStorage.members||"[]");
+let buyers=JSON.parse(localStorage.buyers||"[]");
+
+window.onload=()=>{
+if(localStorage.creator==="true") document.body.classList.add("creator");
+renderProducts();
+};
+
+/* NAV */
+function openPage(id){
+document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+}
+
+/* LOGIN / SIGNUP */
+function openLogin(){loginModal.style.display="block"}
+function openSignup(){signupModal.style.display="block"}
+function login(){
+localStorage.user=loginEmail.value;
+if(!members.includes(loginEmail.value)){
+members.push(loginEmail.value);
+localStorage.members=JSON.stringify(members);
+}
+location.reload();
+}
+function signup(){
+localStorage.user=signupEmail.value;
+if(!members.includes(signupEmail.value)){
+members.push(signupEmail.value);
+localStorage.members=JSON.stringify(members);
+}
+location.reload();
+}
+
+/* CREATOR */
+function creatorPrompt(){
+let p=prompt("Creator Password");
+if(p==="exestore"){
+unlockFx.classList.add("active");
+setTimeout(()=>{
+unlockFx.classList.remove("active");
+localStorage.creator="true";
+location.reload();
+},1500);
+}else alert("Wrong password");
+}
+function creatorLogout(){
+localStorage.removeItem("creator");
+location.reload();
+}
+
+/* PRODUCTS */
+function openAddProduct(){addProductModal.style.display="block"}
+function addProduct(){
+products.push({
+name:pName.value,
+price:pPrice.value,
+img:pImg.value,
+link:pLink.value,
+shape:pShape.value
+});
+localStorage.products=JSON.stringify(products);
+renderProducts();
+addProductModal.style.display="none";
+}
+function renderProducts(){
+productList.innerHTML="";
+products.forEach(p=>{
+let d=document.createElement("div");
+d.className="card "+p.shape;
+d.innerHTML=`
+<img src="${p.img}">
+<h4>${p.name}</h4>
+<b>₹${p.price}</b>
+<button onclick="buy('${p.name}','${p.link}')">Buy</button>
+`;
+productList.appendChild(d);
+});
+}
+
+/* BUY */
+function buy(name,link){
+if(!localStorage.user){
+alert("Login required");
+openLogin();
+return;
+}
+let found=buyers.find(b=>b.email===localStorage.user && b.product===name);
+if(found) found.count++;
+else buyers.push({email:localStorage.user,product:name,count:1});
+localStorage.buyers=JSON.stringify(buyers);
+window.open(link,"_blank");
+}
+
+/* DATA */
+function showMembers(){
+dataTitle.innerText="Members";
+dataList.innerHTML=members.map(m=>`<div>${m}</div>`).join("");
+dataModal.style.display="block";
+}
+function showBuyers(){
+dataTitle.innerText="Buyers";
+dataList.innerHTML=buyers.map(b=>`<div>${b.email} → ${b.product} (${b.count})</div>`).join("");
+dataModal.style.display="block";
+}
+</script>
+
+</body>
+</html>
